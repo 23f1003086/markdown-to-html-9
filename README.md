@@ -2,7 +2,7 @@
 
 ## Project Description
 This project was automatically generated based on the following requirement:
-Add tabs #markdown-tabs that switch between rendered HTML in #markdown-output and the original Markdown in #markdown-source while keeping content in sync.
+Display a live word count badge #markdown-word-count that updates after every render and formats numbers with Intl.NumberFormat.
 
 ## Features
 - Implements the specified functionality
