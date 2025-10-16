@@ -14,13 +14,27 @@
         #loading {
             display: none;
         }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Markdown to HTML Converter</h1>
         <div id="loading" class="alert alert-info">Processing...</div>
-        <div id="markdown-output" class="mt-4"></div>
+        
+        <div id="markdown-tabs" class="mt-4">
+            <button class="btn btn-secondary" id="show-markdown">Show Markdown</button>
+            <button class="btn btn-secondary" id="show-html">Show HTML</button>
+        </div>
+        
+        <div id="markdown-source" class="tab-content active mt-4"></div>
+        <div id="markdown-output" class="tab-content mt-4"></div>
+        
         <hr>
         <h2>Upload Your Markdown File</h2>
         <input type="file" id="file-input" class="form-control" accept=".md">
@@ -33,7 +47,11 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const outputDiv = document.getElementById("markdown-output");
+            const sourceDiv = document.getElementById("markdown-source");
             const loadingDiv = document.getElementById("loading");
+            const showMarkdownButton = document.getElementById("show-markdown");
+            const showHtmlButton = document.getElementById("show-html");
+            const fileInput = document.getElementById("file-input");
 
             // Function to fetch and convert markdown file
             function fetchMarkdown() {
@@ -44,8 +62,9 @@
                         return response.text();
                     })
                     .then(markdownText => {
+                        sourceDiv.textContent = markdownText; // Display original markdown
                         const html = marked.parse(markdownText);
-                        outputDiv.innerHTML = html;
+                        outputDiv.innerHTML = html; // Display converted HTML
                         hljs.highlightAll();
                     })
                     .catch(error => {
@@ -63,8 +82,9 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const markdownText = e.target.result;
+                        sourceDiv.textContent = markdownText; // Display original markdown
                         const html = marked.parse(markdownText);
-                        outputDiv.innerHTML = html;
+                        outputDiv.innerHTML = html; // Display converted HTML
                         hljs.highlightAll();
                     };
                     reader.onerror = function() {
@@ -80,7 +100,18 @@
             fetchMarkdown();
 
             // Event listener for file input
-            document.getElementById("file-input").addEventListener("change", handleFileUpload);
+            fileInput.addEventListener("change", handleFileUpload);
+
+            // Tab switching functionality
+            showMarkdownButton.addEventListener("click", function() {
+                sourceDiv.classList.add('active');
+                outputDiv.classList.remove('active');
+            });
+
+            showHtmlButton.addEventListener("click", function() {
+                outputDiv.classList.add('active');
+                sourceDiv.classList.remove('active');
+            });
         });
     </script>
 </body>
