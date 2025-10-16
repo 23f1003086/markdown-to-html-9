@@ -67,9 +67,9 @@
             }
 
             // Function to fetch and convert markdown file
-            function fetchMarkdown() {
+            function fetchMarkdown(url) {
                 loadingDiv.style.display = "block";
-                fetch('input.md')
+                fetch(url)
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.text();
@@ -111,8 +111,16 @@
                 }
             }
 
-            // Load the default markdown file on page load
-            fetchMarkdown();
+            // Check for URL parameter and fetch markdown if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const markdownUrl = urlParams.get('url');
+            if (markdownUrl) {
+                fetchMarkdown(markdownUrl);
+                document.querySelector('#markdown-source-label').textContent = markdownUrl;
+            } else {
+                fetchMarkdown('input.md');
+                document.querySelector('#markdown-source-label').textContent = 'input.md';
+            }
 
             // Event listener for file input
             fileInput.addEventListener("change", handleFileUpload);
