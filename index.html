@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        #loading {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Markdown to HTML Converter</h1>
+        <div id="loading" class="alert alert-info">Processing...</div>
+        <div id="markdown-output" class="mt-4"></div>
+        <hr>
+        <h2>Upload Your Markdown File</h2>
+        <input type="file" id="file-input" class="form-control" accept=".md">
+        <button id="convert-button" class="btn btn-primary mt-2">Convert</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const outputDiv = document.getElementById("markdown-output");
+            const loadingDiv = document.getElementById("loading");
+
+            // Function to fetch and convert markdown file
+            function fetchMarkdown() {
+                loadingDiv.style.display = "block";
+                fetch('input.md')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.text();
+                    })
+                    .then(markdownText => {
+                        const html = marked.parse(markdownText);
+                        outputDiv.innerHTML = html;
+                        hljs.highlightAll();
+                    })
+                    .catch(error => {
+                        outputDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                    })
+                    .finally(() => {
+                        loadingDiv.style.display = "none";
+                    });
+            }
+
+            // Function to handle file upload
+            function handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (file && file.type === "text/markdown") {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const markdownText = e.target.result;
+                        const html = marked.parse(markdownText);
+                        outputDiv.innerHTML = html;
+                        hljs.highlightAll();
+                    };
+                    reader.onerror = function() {
+                        outputDiv.innerHTML = `<div class="alert alert-danger">Error reading file</div>`;
+                    };
+                    reader.readAsText(file);
+                } else {
+                    outputDiv.innerHTML = `<div class="alert alert-danger">Please upload a valid markdown file.</div>`;
+                }
+            }
+
+            // Load the default markdown file on page load
+            fetchMarkdown();
+
+            // Event listener for file input
+            document.getElementById("file-input").addEventListener("change", handleFileUpload);
+        });
+    </script>
+</body>
+</html>
