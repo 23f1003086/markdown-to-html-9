@@ -2,7 +2,7 @@
 
 ## Project Description
 This project was automatically generated based on the following requirement:
-Display a live word count badge #markdown-word-count that updates after every render and formats numbers with Intl.NumberFormat.
+Support loading Markdown from a ?url= parameter when present and fall back to the attachment otherwise, showing the active source in #markdown-source-label.
 
 ## Features
 - Implements the specified functionality
